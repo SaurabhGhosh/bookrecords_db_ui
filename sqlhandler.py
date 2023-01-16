@@ -59,14 +59,14 @@ class SQLHandler:
         It takes a DTO as input which contains the required details for the record. """
         # Check that the data been passed as input is a new record to be inserted into database.
         if book_data.store_flag == "new":
-            # Set the insertion query as a variable. Use the values from the DTO within parameterized string text.
-            insert_query = f"INSERT INTO books " \
-                           f"(book_ISBN, book_name, book_writer, book_genre) " \
-                           f"VALUES (" \
-                           f"'{book_data.book_ISBN}'," \
-                           f"'{book_data.book_name}'," \
-                           f"'{book_data.book_writer}'," \
-                           f"'{book_data.book_genre}')"
+            # Set the insertion query as a variable.
+            # Use placeholders for the values.
+            # The values will be passed with a parameter to the cursor.execute method as a tuple.
+            # This way, SQL injection will be avoided by passing the values through MySQL library method.
+            insert_query = "INSERT INTO books " \
+                           "(book_ISBN, book_name, book_writer, book_genre) " \
+                           "VALUES (%s, %s, %s, %s)"
+            
             # Always call the create_book_table method to create the table.
             # Checking whether the table exists or not is handled within create_book_table method.
             if self.create_book_table():
@@ -75,7 +75,7 @@ class SQLHandler:
                 # Enclose the database call within try and except
                 try:
                     # Execute the insert query
-                    cursor.execute(insert_query)
+                    cursor.execute(insert_query, tuple(book_data.get_as_list()))
                     # Remember to commit if successful
                     self.connection.commit()
                     # Set the flag in the DTO to indicate that storing was successful
