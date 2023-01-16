@@ -75,6 +75,7 @@ class SQLHandler:
                 # Enclose the database call within try and except
                 try:
                     # Execute the insert query
+                    # Pass the values as a parameter
                     cursor.execute(insert_query, tuple(book_data.get_as_list()))
                     # Remember to commit if successful
                     self.connection.commit()
